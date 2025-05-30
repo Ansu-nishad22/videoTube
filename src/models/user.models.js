@@ -1,5 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
+// import jwt from "jsonwebtoken";
+
 
 const userSchema = new Schema(
     {
@@ -52,7 +54,8 @@ const userSchema = new Schema(
 )
 userSchema.pre("save" , async function (next){
     //if the modifired field is not a password then return next
-     if (!this.modified("password")) return next()
+    //fixed in registration video
+     if (!this.isModified("password")) return next()
     //if the modifird field is password or you are updating the password then then run this code
     this.password = bcrypt.hash(this.password, 10)
 
@@ -73,7 +76,7 @@ userSchema.methods.generateAccessToken = function (){
     _id : rhis._id,  //when we destructured my token i can grab this info
     email : this.email,
     username : this.username,
-    fukkkname : this.fullname
+    fullname : this.fullname
   },process.env.ACCESS_TOKEN_SECRET,   //secret msg or info
   {expiresIn : process.env.ACCESS_TOKEN_EXPIRY}
 )
